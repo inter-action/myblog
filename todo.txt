@@ -1,0 +1,171 @@
+
+
+BLOG ----
+http://godaddy.idcspy.com/domain-regist
+
+
+* [install nginx on centos]
+  * [install docker, nginx, vim on centos] (https://www.jianshu.com/p/6faf776b520d)
+  * (https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7)
+  * https://www.tecmint.com/install-nginx-on-centos-7/
+  * https://gist.github.com/ifels/c8cfdfe249e27ffa9ba1
+  
+  ```
+  sudo cat /etc/*release*
+
+  export LC_ALL="en_US.UTF-8"
+  echo 'LC_ALL="en_US.UTF-8"' > /etc/locale.conf
+  echo 'LC_ALL="en_US.UTF-8"' > /etc/default/locale
+  yum update -y && yum install -y vim wget rsync 
+
+  
+  ```
+
+  第一步，在/etc/yum.repos.d/目录下创建一个源配置文件nginx.repo：
+
+  cd /etc/yum.repos.d/
+  
+  vim nginx.repo
+
+  填写如下内容：
+
+  [nginx]
+  name=nginx repo
+  baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+  gpgcheck=0
+  enabled=1
+
+  保存，则会产生一个/etc/yum.repos.d/nginx.repo文件。
+
+  下面直接执行如下指令即可自动安装好Nginx：
+
+  yum install nginx -y
+  安装完成，下面直接就可以启动Nginx了：
+
+  /etc/init.d/nginx start
+
+
+  enable ssl
+
+
+* transfer files
+  Linux 超级守护进程 xinetd - http://blog.51cto.com/linuxzoe/572965
+  rsync - https://segmentfault.com/a/1190000000444614
+
+  ftpserver setup:
+    https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-on-centos-6--2
+    https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-16-04
+
+  http://man.linuxde.net/chkconfig
+  chkconfig --list
+    等级0表示：表示关机
+    等级1表示：单用户模式
+    等级2表示：无网络连接的多用户命令行模式
+    等级3表示：有网络连接的多用户命令行模式
+    等级4表示：不可用
+    等级5表示：带图形界面的多用户模式
+    等级6表示：重新启动
+
+
+  * create & add user
+    https://www.digitalocean.com/community/tutorials/how-to-add-and-delete-users-on-a-centos-7-server
+    https://www.digitalocean.com/community/tutorials/how-to-create-a-sudo-user-on-centos-quickstart
+    
+
+    * change /etc/sudoers file:
+      * 我server的 sudoers file 中的 wheel group 是注释掉的, 所以将用户添加到这个组也没法进行sudo
+      * vim /etc/sudoers, uncomment `%wheel	ALL=(ALL)	ALL` this line
+
+
+  * config ssh:
+    * https://www.digitalocean.com/community/tutorials/how-to-use-ssh-to-connect-to-a-remote-server-in-ubuntu
+    * http://daemon369.github.io/ssh/2015/03/21/using-ssh-config-file
+
+    server's /etc/ssh/sshd_config:
+
+    To enable password authentication, uncomment
+    #PasswordAuthentication yes
+    To enable root login, uncomment, disabled this after successfully config other user with sudo privilge
+    #PermitRootLogin yes
+
+    To enable ssh key login, uncomment
+    #PubkeyAuthentication yes
+    #AuthorizedKeysFile .ssh/authorized_keys
+
+
+    sudo systemctl restart sshd.service
+
+
+    ssh-keygen -t rsa
+    touch ~/.ssh/authorized_keys
+    copy id_rsa.pub to authorized_keys file
+
+    for centos 6.x run, https://www.cyberciti.biz/faq/centos-stop-start-restart-sshd-command/
+      chkconfig sshd on
+      service sshd start
+
+    
+    * touch ~/.ssh/config
+
+      Host *
+          UseKeychain yes
+
+      Host blog
+          HostName <ip_addr>
+          User <username>
+          IdentityFile ~/.ssh/id_rsa
+          IdentitiesOnly yes
+          Port <port_number default to 22>
+
+
+* install docker & docker compose:
+  * https://docs.docker.com/engine/installation/linux/docker-ce/centos/#upgrade-docker-ce
+  * 
+
+
+    ```shell
+    sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    ```
+
+* [How to Enable EPEL Repository for RHEL/CentOS 7.x/6.x/5.x](https://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/)
+* [BBR 是什么](https://kn007.net/topics/centos-6-safety-quickly-enable-tcp-congestion-control-algorithm-bbr/)
+
+
+## server
+
+security:
+https://serversforhackers.com/c/creating-users-and-ssh-security
+    disable root login, can login by other user, then promot to root
+
+ssh config:
+https://serversforhackers.com/c/logging-into-your-server
+https://serversforhackers.com/c/configuring-ssh-locally
+
+htop:
+    https://serversforhackers.com/c/getting-around-your-server
+
+
+## golang
+organize this file to notes of golang
+
+
+
+favor this
+    https://github.com/golang/dep
+
+cross build in golang:
+
+  Segmentation fault
+
+  [关于go程序启动时Segmentation fault](https://studygolang.com/topics/1733)
+
+  修改 FileZilla 传输方式从auto到binary
+
+
+
+todo:
+  * valgrind 工具
+  
+
+
