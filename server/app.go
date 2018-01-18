@@ -4,15 +4,22 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/inter-action/myblog/server/utils"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/olebedev/config"
 )
 
+type App struct {
+	Conf   *config.Config
+	Engine *echo.Echo
+	API    *API
+}
+
 func main() {
 	// Parse config yaml string from ./conf.go
 	conf, err := config.ParseYaml(confString)
-	PanicIf(err)
+	utils.NoError(err)
 
 	// Set config variables delivered from main.go:11
 	// Variables defined as ./conf.go:3
@@ -24,6 +31,22 @@ func main() {
 
 	// Echo instance
 	engine := echo.New()
+
+	// Initialize the application
+	app := &App{
+		Conf:   conf,
+		Engine: engine,
+		API:    &API{},
+	}
+
+	// Map app and uuid for every requests
+	// a middleware that do come pre-process work on request
+	app.Engine.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("app", app)
+			return next(c)
+		}
+	})
 
 	// Set up echo debug level
 	engine.Debug = conf.UBool("debug") // get debug config value returns boolean
@@ -50,6 +73,8 @@ func main() {
 		return c.Render(http.StatusOK, "hello", "world")
 	})
 
+	app.API.Bind(engine.Group("/api"))
+
 	// Start server
-	engine.Logger.Fatal(engine.Start(":" + conf.UString("port")))
+	utils.NoError(engine.Start(":" + conf.UString("port")))
 }
