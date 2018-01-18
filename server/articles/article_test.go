@@ -3,23 +3,7 @@ package articles
 import (
 	"strings"
 	"testing"
-	"time"
 )
-
-func TestLoadContent(t *testing.T) {
-	art := &Article{
-		Title:       "title",
-		Path:        "path",
-		DateCreated: time.Now(),
-		DateUpdated: time.Now(),
-		Tags:        []string{"g", "h", "i"},
-		Slug:        "create new content out of air",
-	}
-
-	if art.LoadContent() != "helloworld" {
-		t.Error("content TestLoadContent failed")
-	}
-}
 
 func TestParseArticle(t *testing.T) {
 	_, err := ParseArticle("./__test__/article.md")

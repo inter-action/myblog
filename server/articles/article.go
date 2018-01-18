@@ -13,15 +13,6 @@ import (
 	dry "github.com/ungerik/go-dry"
 )
 
-type Article struct {
-	Title       string
-	Path        string
-	DateCreated time.Time
-	DateUpdated time.Time
-	Tags        []string
-	Slug        string
-}
-
 func ParseArticle(path string) (*Article, error) {
 	fileContent, err := dry.FileGetString(path)
 	if err != nil {
@@ -45,23 +36,23 @@ func ParseArticle(path string) (*Article, error) {
 	return &ar, nil
 }
 
+type Article struct {
+	Title       string    `json:"title"`
+	Path        string    `json:"-"`
+	DateCreated time.Time `json:"created"`
+	DateUpdated time.Time `json:"updated"`
+	Tags        []string  `json:"tags"`
+	Slug        string    `json:"slug"`
+}
+
 // LoadContent return []string of two, 1st is the meta 2st is content of the file
-func (ar *Article) LoadContent() ([]string, error) {
-	fileContent, err := dry.FileGetString(ar.Path)
+func (self *Article) LoadContent() ([]string, error) {
+	fileContent, err := dry.FileGetString(self.Path)
 	if err != nil {
 		return nil, err
 	}
 	meta, content := splitMarkdown(fileContent)
 	return []string{meta, content}, nil
-}
-
-func splitMarkdown(str string) (string, string) {
-	regx := regexp.MustCompile(`(?s)=+([^=]*)=+(.*)`)
-	matchs := regx.FindAllStringSubmatch(str, 1)
-	if len(matchs) == 1 {
-		return strings.TrimSpace(matchs[0][1]), strings.TrimSpace(matchs[0][2])
-	}
-	return "", str
 }
 
 func readMetaDataInto(str string, ar *Article) error {
@@ -81,4 +72,13 @@ func readMetaDataInto(str string, ar *Article) error {
 		ar.Tags = strings.Split(conf.UString("tags"), ",")
 	}
 	return nil
+}
+
+func splitMarkdown(str string) (string, string) {
+	regx := regexp.MustCompile(`(?s)=+([^=]*)=+(.*)`)
+	matchs := regx.FindAllStringSubmatch(str, 1)
+	if len(matchs) == 1 {
+		return strings.TrimSpace(matchs[0][1]), strings.TrimSpace(matchs[0][2])
+	}
+	return "", str
 }
