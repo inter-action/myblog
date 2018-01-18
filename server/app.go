@@ -16,6 +16,8 @@ type App struct {
 	API    *API
 }
 
+var app *App
+
 func main() {
 	// Parse config yaml string from ./conf.go
 	conf, err := config.ParseYaml(confString)
@@ -33,7 +35,7 @@ func main() {
 	engine := echo.New()
 
 	// Initialize the application
-	app := &App{
+	app = &App{
 		Conf:   conf,
 		Engine: engine,
 		API:    &API{},
@@ -41,12 +43,12 @@ func main() {
 
 	// Map app and uuid for every requests
 	// a middleware that do come pre-process work on request
-	app.Engine.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Set("app", app)
-			return next(c)
-		}
-	})
+	// app.Engine.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+	// 	return func(c echo.Context) error {
+	// 		c.Set("app", app)
+	// 		return next(c)
+	// 	}
+	// })
 
 	// Set up echo debug level
 	engine.Debug = conf.UBool("debug") // get debug config value returns boolean

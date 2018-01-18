@@ -43,16 +43,24 @@ type Article struct {
 	DateUpdated time.Time `json:"updated"`
 	Tags        []string  `json:"tags"`
 	Slug        string    `json:"slug"`
+	RawContent  string    `json:"-"`
+	MetaContent string    `json:"-"`
+	cacheTime   time.Time
 }
 
 // LoadContent return []string of two, 1st is the meta 2st is content of the file
 func (self *Article) LoadContent() ([]string, error) {
-	fileContent, err := dry.FileGetString(self.Path)
-	if err != nil {
-		return nil, err
+	if self.RawContent == "" || utils.IsOutCache(self.cacheTime) {
+		fileContent, err := dry.FileGetString(self.Path)
+		if err != nil {
+			return nil, err
+		}
+		meta, content := splitMarkdown(fileContent)
+		self.RawContent = content
+		self.MetaContent = meta
+		self.cacheTime = time.Now()
 	}
-	meta, content := splitMarkdown(fileContent)
-	return []string{meta, content}, nil
+	return []string{self.MetaContent, self.RawContent}, nil
 }
 
 func readMetaDataInto(str string, ar *Article) error {

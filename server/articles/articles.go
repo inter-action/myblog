@@ -16,13 +16,15 @@ var JSON_FILE_PATH = ".articles.tmp"
 
 var mutex = &sync.Mutex{}
 
-func LoadArticles() Articles {
+func LoadArticles() (Articles, os.FileInfo) {
+	info, err := os.Stat(JSON_FILE_PATH)
+	utils.NoError(err)
 	bs, err := dry.FileGetBytes(JSON_FILE_PATH)
 	utils.NoError(err)
 	ars := Articles{}
 	err = json.Unmarshal(bs, &ars)
 	utils.NoError(err)
-	return ars
+	return ars, info
 }
 
 func Persist(ars Articles) {

@@ -20,3 +20,7 @@ func GetValidResult(result interface{}, err error) interface{} {
 func ParseTime(str string) (time.Time, error) {
 	return time.Parse("2006-01-02 15:04:05", str)
 }
+
+func IsOutCache(datetime time.Time) bool {
+	return time.Now().Sub(datetime) >= 24*time.Hour
+}
