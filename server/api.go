@@ -1,12 +1,10 @@
 package main
 
 import (
-	"errors"
 	"net/http"
-	"time"
 
 	"github.com/inter-action/myblog/server/articles"
-	"github.com/inter-action/myblog/server/utils"
+	"github.com/inter-action/myblog/server/db"
 	"github.com/labstack/echo"
 )
 
@@ -27,48 +25,29 @@ func (self *API) ConfHandler(c echo.Context) error {
 	return c.JSON(200, app.Conf.Root)
 }
 
-var _articles articles.Articles
-var _articlesTime time.Time
-var _articleMap map[string]*articles.Article
-
 func (self *API) ArticlesHandler(c echo.Context) error {
-	loadArticles()
-	return c.JSON(200, _articles)
+	db.LoadArticles(app.Conf.UString("mdroot"))
+	return c.JSON(200, db.Articles)
 }
 
 func (self *API) ArticleHandler(c echo.Context) error {
-	loadArticles()
-	result := _articleMap[c.Param("slug")]
+	db.LoadArticles(app.Conf.UString("mdroot"))
+	result := db.ArticleMap[c.Param("slug")]
 	if result != nil {
 		if contents, err := result.LoadContent(); err != nil {
 			c.Error(err)
 		} else {
-			return c.String(200, contents[1])
+			data := struct {
+				Article *articles.Article `json:"article"`
+				Content string            `json:"content"`
+			}{
+				Article: result,
+				Content: contents[1],
+			}
+			return c.JSON(200, data)
 		}
 	} else {
 		return c.String(http.StatusNotFound, "")
-	}
-
-	return nil
-}
-
-func loadArticles() error {
-	if _articles == nil || utils.IsOutCache(_articlesTime) {
-		path := app.Conf.UString("mdroot")
-		if path == "" {
-			return errors.New("mdroot not config")
-		}
-
-		var err error
-		_articles, err = articles.ParseArticles(path)
-		if err != nil {
-			return err
-		}
-		_articleMap = make(map[string]*articles.Article)
-		for _, ar := range _articles {
-			_articleMap[ar.Slug] = ar
-		}
-		_articlesTime = time.Now()
 	}
 
 	return nil

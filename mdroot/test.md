@@ -7,3 +7,10 @@ this is content
 
 bb
 xx
+
+<img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2017/02/05-02-diagram_past01.png" width="600">
+
+
+another 
+
+![alt tag](./assets/headshot1.jpeg)

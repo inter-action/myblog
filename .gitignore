@@ -1,3 +1,6 @@
 vendor
 .pid
 build
+frontend
+mdroot/*
+mdroot/!test.md

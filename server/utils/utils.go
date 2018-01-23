@@ -1,6 +1,11 @@
 package utils
 
-import "time"
+import (
+	"bufio"
+	"io"
+	"os"
+	"time"
+)
 
 // NoError raises an error if it not nil
 func NoError(e error) {
@@ -23,4 +28,12 @@ func ParseTime(str string) (time.Time, error) {
 
 func IsOutCache(datetime time.Time) bool {
 	return time.Now().Sub(datetime) >= 24*time.Hour
+}
+
+func FileBufferedReader(filePath string) (io.Reader, error) {
+	if file, error := os.Open(filePath); error != nil {
+		return nil, error
+	} else {
+		return bufio.NewReader(file), nil
+	}
 }

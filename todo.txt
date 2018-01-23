@@ -162,10 +162,27 @@ cross build in golang:
 
   修改 FileZilla 传输方式从auto到binary
 
+golang debug: 
+  https://github.com/derekparker/delve/blob/master/Documentation/installation/osx/install.md
+
+
+yaml syntax: http://www.ruanyifeng.com/blog/2016/07/yaml.html
+
 
 
 todo:
   * valgrind 工具
-  
+  * error handling
+  * do not have enough space for install devle
+  https://github.com/noaway/dateparse/blob/master/parseany.go
+  * disable lint
+  * react markdown, https://github.com/rexxars/react-markdown
+  * config webpack server proxy
+  * golang debug in vsc
+      
+      
+
+ui-design examples:
+  https://imhanjm.com/archives/
 
 

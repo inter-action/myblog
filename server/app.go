@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/inter-action/myblog/server/routes"
 	"github.com/inter-action/myblog/server/utils"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -75,6 +76,7 @@ func main() {
 		return c.Render(http.StatusOK, "hello", "world")
 	})
 
+	engine.GET("/images/:slug/*", routes.CreateImageRoutes(app.Conf.UString("mdroot")))
 	app.API.Bind(engine.Group("/api"))
 
 	// Start server

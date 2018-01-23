@@ -14,7 +14,8 @@ func TestParseArticle(t *testing.T) {
 
 func TestSplitContent(t *testing.T) {
 	fileContent := `
-===
+
+    ===
 title: you dont know js
 created: 2018-01-18 14:20:06
 ===

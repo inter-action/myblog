@@ -1,0 +1,6 @@
+* vscode golang snippets - https://github.com/Microsoft/vscode-go/blob/master/snippets/go.json
+
+
+datetime manipulation - 
+    https://stackoverflow.com/questions/14106541/go-parsing-date-time-strings-which-are-not-standard-formats
+    http://www.golangprograms.com/golang/date-time/
