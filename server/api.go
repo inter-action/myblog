@@ -2,10 +2,12 @@ package main
 
 import (
 	"net/http"
+	"path"
 
 	"github.com/inter-action/myblog/server/articles"
 	"github.com/inter-action/myblog/server/db"
 	"github.com/labstack/echo"
+	"github.com/olebedev/config"
 )
 
 // API is a defined as struct bundle
@@ -18,6 +20,7 @@ func (self *API) Bind(group *echo.Group) {
 	group.GET("/v1/conf", self.ConfHandler)
 	group.GET("/articles", self.ArticlesHandler)
 	group.GET("/articles/:slug", self.ArticleHandler)
+	group.GET("/meta", self.MetaHandler)
 }
 
 // ConfHandler handle the app config, for example
@@ -51,4 +54,22 @@ func (self *API) ArticleHandler(c echo.Context) error {
 	}
 
 	return nil
+}
+
+func (self *API) MetaHandler(c echo.Context) error {
+	mdroot := app.Conf.UString("mdroot")
+	metaPath := path.Join(mdroot, "meta.yaml")
+	if yamlConfig, err := config.ParseYamlFile(metaPath); err != nil {
+		c.Echo().Logger.Errorf("meta.json, %s", err.Error())
+		return c.String(http.StatusInternalServerError, "meta.json: "+err.Error())
+	} else {
+		// :bm, golang cant convert []interface{} to []string
+		return c.JSON(200, struct {
+			Me     string        `json:"me"`
+			Images []interface{} `json:"images"`
+		}{
+			Me:     yamlConfig.UString("me"),
+			Images: yamlConfig.UList("images"),
+		})
+	}
 }
