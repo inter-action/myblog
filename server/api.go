@@ -3,9 +3,11 @@ package main
 import (
 	"net/http"
 	"path"
+	"time"
 
 	"github.com/inter-action/myblog/server/articles"
 	"github.com/inter-action/myblog/server/db"
+	"github.com/inter-action/myblog/server/utils"
 	"github.com/labstack/echo"
 	"github.com/olebedev/config"
 )
@@ -56,20 +58,29 @@ func (self *API) ArticleHandler(c echo.Context) error {
 	return nil
 }
 
+var yamlConfig *config.Config
+var yamlConfigTime time.Time
+
 func (self *API) MetaHandler(c echo.Context) error {
 	mdroot := app.Conf.UString("mdroot")
 	metaPath := path.Join(mdroot, "meta.yaml")
-	if yamlConfig, err := config.ParseYamlFile(metaPath); err != nil {
-		c.Echo().Logger.Errorf("meta.json, %s", err.Error())
-		return c.String(http.StatusInternalServerError, "meta.json: "+err.Error())
-	} else {
-		// :bm, golang cant convert []interface{} to []string
-		return c.JSON(200, struct {
-			Me     string        `json:"me"`
-			Images []interface{} `json:"images"`
-		}{
-			Me:     yamlConfig.UString("me"),
-			Images: yamlConfig.UList("images"),
-		})
+	var err error
+	if yamlConfig == nil || utils.IsOutCache(yamlConfigTime) {
+		if yamlConfig, err = config.ParseYamlFile(metaPath); err != nil {
+			c.Echo().Logger.Errorf("meta.yaml, %s", err.Error())
+			return c.String(http.StatusInternalServerError, "meta: "+err.Error())
+		} else {
+			yamlConfigTime = time.Now()
+		}
 	}
+	// :bm, golang cant convert []interface{} to []string
+	return c.JSON(200, struct {
+		Me     string        `json:"me"`
+		Images []interface{} `json:"images"`
+		Skills []interface{} `json:"skills"`
+	}{
+		Me:     yamlConfig.UString("me"),
+		Images: yamlConfig.UList("images"),
+		Skills: yamlConfig.UList("skills"),
+	})
 }

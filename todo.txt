@@ -131,6 +131,14 @@ http://godaddy.idcspy.com/domain-regist
 * [How to Enable EPEL Repository for RHEL/CentOS 7.x/6.x/5.x](https://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/)
 * [BBR 是什么](https://kn007.net/topics/centos-6-safety-quickly-enable-tcp-congestion-control-algorithm-bbr/)
 
+nginx permission
+
+  user  nginx;
+  worker_processes  1;
+
+nginx gzip
+
+
 
 ## server
 
@@ -165,10 +173,13 @@ cross build in golang:
 golang debug: 
   https://github.com/derekparker/delve/blob/master/Documentation/installation/osx/install.md
 
+[]interface to []string
+https://stackoverflow.com/questions/44027826/convert-interface-to-string-in-golang
 
 yaml syntax: http://www.ruanyifeng.com/blog/2016/07/yaml.html
 
 
+https://www.tecmint.com/optimize-and-compress-jpeg-or-png-batch-images-linux-commandline/
 
 todo:
   * valgrind 工具
@@ -179,7 +190,12 @@ todo:
   * react markdown, https://github.com/rexxars/react-markdown
   * config webpack server proxy
   * golang debug in vsc
-      
+  https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04
+  
+
+  add support for cn title
+  enhance article parsing
+
       
 
 ui-design examples:
