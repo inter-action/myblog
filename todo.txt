@@ -3,49 +3,164 @@
 BLOG ----
 http://godaddy.idcspy.com/domain-regist
 
+* others
+  * commands
+
+    sudo cat /etc/*release*  #release info
+    id              # view user's id
+
+
+
+  * 查看 .gz log 文件
+    * https://www.cyberciti.biz/faq/unix-linux-cat-gz-file-command/
+
+
+
+* server setup
+
+  
+  export LC_ALL="en_US.UTF-8"
+  echo 'LC_ALL="en_US.UTF-8"' > /etc/locale.conf
+  echo 'LC_ALL="en_US.UTF-8"' > /etc/default/locale
+  yum update -y && yum install -y vim wget rsync 
+
 
 * [install nginx on centos]
   * [install docker, nginx, vim on centos] (https://www.jianshu.com/p/6faf776b520d)
   * (https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7)
   * https://www.tecmint.com/install-nginx-on-centos-7/
   * https://gist.github.com/ifels/c8cfdfe249e27ffa9ba1
+
+
+  * centos 6:
+    第一步，在/etc/yum.repos.d/目录下创建一个源配置文件nginx.repo：
+
+    cd /etc/yum.repos.d/
+    
+    vim nginx.repo
+
+    填写如下内容：
+
+    [nginx]
+    name=nginx repo
+    baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+    gpgcheck=0
+    enabled=1
+
+    保存，则会产生一个/etc/yum.repos.d/nginx.repo文件。
+
+    下面直接执行如下指令即可自动安装好Nginx：
+
+    yum install nginx -y
+    安装完成，下面直接就可以启动Nginx了：
+
+    /etc/init.d/nginx start
+
+
+* config nginx
+  * commands
+    # test configuration
+    sudo nginx -t
+
+  * proxy_params
+    * https://github.com/Mechazawa/nginx-config/blob/master/nginx/proxy_params
+    * create a file, then include with 
+      * `include proxy_params;`
+
+  * enable ssl & http2
+    * https:
+      * [Nginx 配置 HTTPS 服务器](https://aotu.io/notes/2016/08/16/nginx-https/index.html) 
+      * [How To Use Certbot Standalone Mode to Retrieve Let's Encrypt SSL Certificates](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates)
+      * [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/)
+
+    * http2:
+      * https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-with-http-2-support-on-ubuntu-16-04
+
+
+    * self signed certificated
+      
+      sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/ssl/<domainname or whatever fit>/selfassign.key -out /etc/ssl/<domainname or whatever fit>/selfassign.crt
+
+      # then config nginx with  
+      ssl_certificate /etc/ssl/xip.io/xip.io.crt; 
+      ssl_certificate_key /etc/ssl/xip.io/xip.io.key;
+
+    * add pem
+      # same fold as ssl certificate
+
+      sudo openssl dhparam -out /etc/ssl/<domainname or whatever fit>/dhparam.pem 2048
+
+      # once it's done, add this to nginx configuration
+      ssl_dhparam  /etc/nginx/ssl/dhparam.pem;
+
+    * add ssl cache
+      * http://nginx.org/en/docs/http/configuring_https_servers.html
+
+      ssl_session_cache shared:SSL:5m;
+      ssl_session_timeout 1h;
+
+    * let encript
+      * upgrade to python3: (centos 6)
+        * https://www.jianshu.com/p/92f6b4505426
+        * https://www.jianshu.com/p/6199b5c26725
+
+
+        yum groupinstall 'Development Tools'
+        yum install zlib-devel bzip2-devel  openssl-devel ncurses-devel
+        wget  https://www.python.org/ftp/python/3.5.0/Python-3.5.0.tar.xz
+        tar xvf  Python-3.5.0.tar.xz
+        cd Python-3.5.0
+        ./configure --prefix=/usr/local/python3
+        # note , this command require root previlege
+        make && make install  
+
+        echo 'export PATH=$PATH:/usr/local/python3/bin' >> ~/.bashrc
+
+        mv /usr/bin/python /usr/bin/python2
+        ln -s /usr/local/python3/bin/python3 /usr/bin/python
+        ln -s /usr/local/python3/bin/python3 /usr/bin/python3
+
+        vim  /usr/bin/yum
+        把第一行中的#!/usr/bin/python 改成#!/usr/bin/python2。至此，centos中python自2.x升级3.x完成。
+
+
+        sudo yum install gcc augeas-libs openssl openssl-devel libffi-devel redhat-rpm-config ca-certificates -y
+        sudo yum install httpd mod_ssl -y
+
+        # nginx 配置, 一定要放过 well-known path
+           location ~* /\.(?!well-known\/) {
+                    deny all;
+                    access_log off;
+                    log_not_found off;
+            }
+
+        sudo certbot-auto --authenticator webroot --installer nginx --no-bootstrap
+          webroot, 是你 nginx root配置的地址, 这个工具会在webroot下插入验证文件,然后通过 .well-known 下面的这个文件去校验
+          注意 domain 的值, 当前 letencript 不支持 wildcard domain. 所以先把需要的 sub-domain 都指定上
+
+          `privkey.pem`  : the private key for your certificate.
+          `fullchain.pem`: the certificate file used in most server software.
+          `chain.pem`    : used for OCSP stapling in Nginx >=1.3.7.
+          `cert.pem`     : will break many server configurations, and should not be used
+                          without reading further documentation (see link below).em
+
+        # expand https domain name
+         sudo certbot-auto certonly --cert-name <domain_name>.me -d <domain_name>.me,www.<domain_name>.me --no-bootstrap
+        # config nginx
+
+          ssl on;
+          ssl_certificate  <path_to_your_cert>/fullchain.pem;
+          ssl_certificate_key  <path_to_your_cert>/privkey.pem;
+      *
+
+
+
+  * nginx log path:
+    * /var/log/nginx
   
-  ```
-  sudo cat /etc/*release*
+  * H5BP Nginx Server configs
 
-  export LC_ALL="en_US.UTF-8"
-  echo 'LC_ALL="en_US.UTF-8"' > /etc/locale.conf
-  echo 'LC_ALL="en_US.UTF-8"' > /etc/default/locale
-  yum update -y && yum install -y vim wget rsync 
-
-  
-  ```
-
-  第一步，在/etc/yum.repos.d/目录下创建一个源配置文件nginx.repo：
-
-  cd /etc/yum.repos.d/
-  
-  vim nginx.repo
-
-  填写如下内容：
-
-  [nginx]
-  name=nginx repo
-  baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
-  gpgcheck=0
-  enabled=1
-
-  保存，则会产生一个/etc/yum.repos.d/nginx.repo文件。
-
-  下面直接执行如下指令即可自动安装好Nginx：
-
-  yum install nginx -y
-  安装完成，下面直接就可以启动Nginx了：
-
-  /etc/init.d/nginx start
-
-
-  enable ssl
 
 
 * transfer files
@@ -196,9 +311,20 @@ todo:
   add support for cn title
   enhance article parsing
 
+  extend timeout settings
+  add trigger update endpoints
+  re-cache seems not working, just replace it with redis.
+  add self signed https, not forcing https
+  automatically deployment
+  http cache not working ?
+
       
 
 ui-design examples:
   https://imhanjm.com/archives/
 
 
+
+
+* life is hard, and the only choice is to fight a better life
+* 
