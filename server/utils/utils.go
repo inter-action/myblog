@@ -27,7 +27,7 @@ func ParseTime(str string) (time.Time, error) {
 }
 
 func IsOutCache(datetime time.Time) bool {
-	return time.Now().Sub(datetime) >= 24*time.Hour
+	return time.Now().Sub(datetime) >= 1*time.Hour
 }
 
 func FileBufferedReader(filePath string) (io.Reader, error) {

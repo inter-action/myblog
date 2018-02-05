@@ -52,6 +52,8 @@ func ParseArticles(path string) (Articles, error) {
 		if filepath.Ext(path) == ".md" {
 			if ar, err := ParseArticle(path); err != nil {
 				return nil
+			} else if ar.Title == "" { // skip any articles without title field
+				return nil
 			} else {
 				ars = append(ars, ar)
 			}
@@ -66,8 +68,16 @@ func ParseArticles(path string) (Articles, error) {
 	return ars, nil
 }
 
-func (self Articles) Sort() {
-	sort.SliceStable(self, func(i, j int) bool { return self[i].DateUpdated.After(self[j].DateUpdated) })
+func (self Articles) Sort(sortFunc func(i, j int) bool) {
+	sort.SliceStable(self, sortFunc)
+}
+
+func (self Articles) SortByCreated() {
+	self.Sort(func(i, j int) bool { return self[i].DateCreated.After(self[j].DateCreated) })
+}
+
+func (self Articles) SortByUpdated() {
+	self.Sort(func(i, j int) bool { return self[i].DateUpdated.After(self[j].DateUpdated) })
 }
 
 func (self Articles) Paginate(page int32, pageSize int32) Articles {

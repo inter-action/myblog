@@ -30,6 +30,7 @@ func LoadArticles(mdroot string) error {
 		if err != nil {
 			return err
 		}
+		Articles.SortByCreated()
 		ArticleMap = make(map[string]*articles.Article)
 		for _, ar := range Articles {
 			ArticleMap[ar.Slug] = ar

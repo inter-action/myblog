@@ -1,7 +1,6 @@
 package articles
 
 import (
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -22,11 +21,6 @@ func ParseArticle(path string) (*Article, error) {
 	meta, _ := splitMarkdown(fileContent)
 	if err := readMetaDataInto(meta, &ar); err != nil {
 		return nil, err
-	}
-	if fileInfo, err := os.Stat(path); err != nil {
-		return nil, err
-	} else {
-		ar.DateUpdated = fileInfo.ModTime()
 	}
 	if path, err := filepath.Abs(path); err != nil {
 		return nil, err
@@ -79,6 +73,15 @@ func readMetaDataInto(str string, ar *Article) error {
 	if conf.UString("tags") != "" {
 		ar.Tags = strings.Split(conf.UString("tags"), ",")
 	}
+
+	if conf.UString("updated") != "" {
+		if ar.DateUpdated, err = utils.ParseTime(conf.UString("updated")); err != nil {
+			return err
+		}
+	} else {
+		ar.DateUpdated = ar.DateCreated
+	}
+
 	return nil
 }
 
