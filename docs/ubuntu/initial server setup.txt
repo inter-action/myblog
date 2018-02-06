@@ -1,0 +1,5 @@
+
+
+sudo adduser sammy
+
+/home/interaction/ftp/blog/build

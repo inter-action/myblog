@@ -1,0 +1,59 @@
+
+
+* install nginx
+    * https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04
+
+
+    sudo systemctl reload nginx
+    sudo systemctl disable nginx
+    sudo systemctl enable nginx
+    sudo systemctl stop nginx
+    sudo systemctl restart nginx
+
+
+
+* enable ssl & http2
+    * https:
+        * [Nginx 配置 HTTPS 服务器](https://aotu.io/notes/2016/08/16/nginx-https/index.html) 
+        * [How To Use Certbot Standalone Mode to Retrieve Let's Encrypt SSL Certificates](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates)
+        * [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/)
+
+    * http2:
+        * https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-with-http-2-support-on-ubuntu-16-04
+
+
+    * self signed certificated
+      
+      sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/ssl/<domainname or whatever fit>/selfassign.key -out /etc/ssl/<domainname or whatever fit>/selfassign.crt
+
+      # then config nginx with  
+      ssl_certificate /etc/ssl/xip.io/xip.io.crt; 
+      ssl_certificate_key /etc/ssl/xip.io/xip.io.key;
+
+
+     * proxy_params
+        * https://github.com/Mechazawa/nginx-config/blob/master/nginx/proxy_params
+        * create a file, then include with 
+        * `include proxy_params;`
+
+
+
+    * add pem
+      # same fold as ssl certificate
+
+      sudo openssl dhparam -out /etc/ssl/<domainname or whatever fit>/dhparam.pem 2048
+
+      # once it's done, add this to nginx configuration
+      ssl_dhparam  /etc/nginx/ssl/dhparam.pem;
+
+    * add ssl cache
+      * http://nginx.org/en/docs/http/configuring_https_servers.html
+
+      ssl_session_cache shared:SSL:5m;
+      ssl_session_timeout 1h;
+
+    * nginx log path:
+        * /var/log/nginx
+    
+    * H5BP Nginx Server configs
