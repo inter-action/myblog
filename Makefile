@@ -56,3 +56,8 @@ ifdef GLIDE		# :todo, this ifdef directive
 else
 	$(warning "Skipping installation of Go dependencies: glide is not installed")
 endif
+
+
+# test
+test:
+	go test -timeout 30s ./server/...
