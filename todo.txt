@@ -148,9 +148,7 @@ todo:
   * error handling
   * do not have enough space for install devle
   https://github.com/noaway/dateparse/blob/master/parseany.go
-  * disable lint
-  * react markdown, https://github.com/rexxars/react-markdown
-  * config webpack server proxy
+  * disable golang lint
   * golang debug in vsc
   https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04
   
@@ -162,13 +160,25 @@ todo:
   add redis ?
   add trigger update endpoints
   http cache not working ?
-  automatically deployment
-    start & stop service with bash script
-  add loading effect.
-  set header & footer height to 60
-  git my articles
-      
 
+  full index search
+  add loading effect
+  backup data, using cloud ?
+
+  i need a gallery page
+
+  嵌入baidu的analytics
+  
+  certbot auto cert
+  install htop 
+  日期解析的不正确
+  文章详情日期显示到秒
+
+
+
+  https://www.digitalocean.com/community/tutorial_series/an-introduction-to-infrastructure-and-application-monitoring
+
+  
 ui-design examples:
   https://imhanjm.com/archives/
 

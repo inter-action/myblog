@@ -4,3 +4,6 @@ build
 frontend
 mdroot/*
 mdroot/!test.md
+
+#ansible
+ansible/deploy-playbook.retry

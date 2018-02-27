@@ -1,0 +1,44 @@
+#  run with `ansible-playbook deploy-playbook.yaml` 
+#  check config with `ansible-playbook deploy-playbook.yaml --syntax-check `
+---
+- hosts: all 
+  remote_user: interaction 
+  tasks:
+    # do i have to add a mkdir task first?
+    - name: kill myblog binary
+      shell: ps -ef | grep myblog | grep -v grep | awk '{print $2}' | xargs kill
+
+    - name: copy build files
+      synchronize: 
+        src: ../frontend/build 
+        dest: /home/interaction/ftp/blog 
+        delete: yes 
+        recursive: yes
+
+    - name: copy public files
+      synchronize: 
+        src: ../public 
+        dest: /home/interaction/ftp/blog 
+        delete: yes 
+        recursive: yes
+
+    - name: copy exec files
+      copy: 
+        src: ../build/myblog 
+        dest: /home/interaction/ftp/blog 
+        owner: interaction 
+        group: interaction 
+        mode: 0754
+    
+    - name: copy mdroot files
+      synchronize:
+        src: ../mdroot 
+        dest: /home/interaction/ftp/blog
+        delete: yes 
+        recursive: yes 
+        rsync_opts: "--exclude=.git"
+      
+    - name: start_myblog_binary
+      shell: nohup ./myblog > log.txt &
+      args:
+        chdir: /home/interaction/ftp/blog 

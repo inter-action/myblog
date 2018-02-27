@@ -1,0 +1,24 @@
+
+* https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-14-04
+
+    # /etc/fail2ban/jail.local
+    [sshd]
+    enable=true
+    port    = ssh #默认的是ssh, 我不知道这个变量是在哪定义的, 由于我机器是自定义的ssh端口号, 所以这边我都要改成我机器的ssh 端口
+    logpath = %(sshd_log)s
+
+
+    [sshd-ddos]
+    # This jail corresponds to the standard configuration in Fail2ban.
+    # The mail-whois action send a notification e-mail with a whois request
+    # in the body.
+    port    = ssh
+    logpath = %(sshd_log)s
+    enable = true
+
+    [nginx-http-auth]
+
+    port    = http,https
+    logpath = %(nginx_error_log)s
+    enable = true
+

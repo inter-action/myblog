@@ -61,3 +61,6 @@ endif
 # test
 test:
 	go test -timeout 30s ./server/...
+
+deploy:
+	cd ansible && ansible-playbook deploy-playbook.yaml
