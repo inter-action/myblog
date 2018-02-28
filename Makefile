@@ -62,5 +62,8 @@ endif
 test:
 	go test -timeout 30s ./server/...
 
-deploy:
+package_front_end:
+	cd frontend && make prod
+
+deploy: package_front_end csbuild
 	cd ansible && ansible-playbook deploy-playbook.yaml
