@@ -23,7 +23,9 @@ func GetValidResult(result interface{}, err error) interface{} {
 
 // ParseTime "2018-01-03 15:46:43"
 func ParseTime(str string) (time.Time, error) {
-	return time.Parse("2006-01-02 15:04:05", str)
+	local, err := time.LoadLocation("Local")
+	NoError(err)
+	return time.ParseInLocation("2006-01-02 15:04:05", str, local)
 }
 
 func IsOutCache(datetime time.Time) bool {

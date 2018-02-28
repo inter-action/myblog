@@ -51,6 +51,10 @@ tags: machine_learning, es
 		t.Error("err: ", ar.Slug)
 	}
 
+	if ar.DateCreated.Hour() != 14 || ar.DateCreated.Minute() != 20 || ar.DateCreated.Second() != 6 || true {
+		t.Error("parse time failed: ", ar.DateCreated)
+	}
+
 	if len(ar.Tags) != 2 {
 		t.Error("err: ", ar.Tags)
 	}

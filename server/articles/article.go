@@ -1,6 +1,8 @@
 package articles
 
 import (
+	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -55,6 +57,20 @@ func (self *Article) LoadContent() ([]string, error) {
 		self.cacheTime = time.Now()
 	}
 	return []string{self.MetaContent, self.RawContent}, nil
+}
+
+// https://gist.github.com/bsphere/8369aca6dde3e7b4392c
+func (self *Article) MarshalJSON() ([]byte, error) {
+	type Alias Article
+	return json.Marshal(&struct {
+		*Alias
+		DateCreated string `json:"created"`
+		DateUpdated string `json:"updated"`
+	}{
+		Alias:       (*Alias)(self),
+		DateCreated: fmt.Sprint(self.DateCreated.UnixNano() / 1e6),
+		DateUpdated: fmt.Sprint(self.DateUpdated.UnixNano() / 1e6),
+	})
 }
 
 func readMetaDataInto(str string, ar *Article) error {

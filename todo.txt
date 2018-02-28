@@ -171,8 +171,10 @@ todo:
   
   certbot auto cert
   install htop 
-  日期解析的不正确
-  文章详情日期显示到秒
+
+  文章样式还有些问题
+
+  ansible 用变量替换掉写死的名称和路径
 
 
 
