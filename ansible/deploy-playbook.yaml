@@ -3,6 +3,8 @@
 ---
 - hosts: all 
   remote_user: interaction 
+  vars:
+    app_root: /home/interaction/ftp/blog
   tasks:
     # do i have to add a mkdir task first?
     - name: kill myblog binary
@@ -11,21 +13,21 @@
     - name: copy build files
       synchronize: 
         src: ../frontend/build 
-        dest: /home/interaction/ftp/blog 
+        dest: "{{app_root}}"
         delete: yes 
         recursive: yes
 
     - name: copy public files
       synchronize: 
         src: ../public 
-        dest: /home/interaction/ftp/blog 
+        dest: "{{app_root}}"
         delete: yes 
         recursive: yes
 
     - name: copy exec files
       copy: 
         src: ../build/myblog 
-        dest: /home/interaction/ftp/blog 
+        dest: "{{app_root}}"
         owner: interaction 
         group: interaction 
         mode: 0754
@@ -33,7 +35,7 @@
     - name: copy mdroot files
       synchronize:
         src: ../mdroot 
-        dest: /home/interaction/ftp/blog
+        dest: "{{app_root}}"
         delete: yes 
         recursive: yes 
         rsync_opts: "--exclude=.git"
@@ -41,4 +43,4 @@
     - name: start_myblog_binary
       shell: nohup ./myblog > log.txt &
       args:
-        chdir: /home/interaction/ftp/blog 
+        chdir: "{{app_root}}"
