@@ -65,5 +65,7 @@ test:
 package_front_end:
 	cd frontend && make prod
 
-deploy: package_front_end csbuild
+deploy: package_front_end csbuild run_ansible
+
+run_ansible:
 	cd ansible && ansible-playbook deploy-playbook.yaml

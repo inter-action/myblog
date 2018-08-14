@@ -162,7 +162,7 @@ todo:
   http cache not working ?
 
   full index search
-  add loading effect
+  
   backup data, using cloud ?
 
   i need a gallery page
@@ -172,9 +172,13 @@ todo:
   certbot auto cert
   install htop 
 
-  文章样式还有些问题
-
+  update webpack to 4?
+  add loading effect
+  
+  add quotes, to where?
   ansible 用变量替换掉写死的名称和路径
+
+
 
 
 
