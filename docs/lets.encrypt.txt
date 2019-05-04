@@ -1,0 +1,3 @@
+# add cron job
+# sudo crontab -e
+1 3 * * * certbot renew

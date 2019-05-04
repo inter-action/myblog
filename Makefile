@@ -21,7 +21,8 @@ DEP         := $(shell command -v dep 2> /dev/null)
 pre-copmile:
 
 $(ON):
-	go install $(IMPORT_PATH)/vendor/github.com/olebedev/on
+	go get github.com/olebedev/on
+	go install github.com/olebedev/on
 
 clean:
 	rm -rf $(TARGET)	

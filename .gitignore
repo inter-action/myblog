@@ -2,8 +2,9 @@ vendor
 .pid
 build
 frontend
-mdroot/*
+mdroot/
 mdroot/!test.md
 
 #ansible
 ansible/deploy-playbook.retry
+ansible/hosts
