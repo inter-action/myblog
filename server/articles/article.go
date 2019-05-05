@@ -2,12 +2,10 @@ package articles
 
 import (
 	"encoding/json"
-	"fmt"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
-
 	"github.com/gosimple/slug"
 	"github.com/inter-action/myblog/server/utils"
 	"github.com/olebedev/config"
@@ -64,12 +62,8 @@ func (self *Article) MarshalJSON() ([]byte, error) {
 	type Alias Article
 	return json.Marshal(&struct {
 		*Alias
-		DateCreated string `json:"created"`
-		DateUpdated string `json:"updated"`
 	}{
 		Alias:       (*Alias)(self),
-		DateCreated: fmt.Sprint(self.DateCreated.UnixNano() / 1e6),
-		DateUpdated: fmt.Sprint(self.DateUpdated.UnixNano() / 1e6),
 	})
 }
 
